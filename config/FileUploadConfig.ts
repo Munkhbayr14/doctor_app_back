@@ -2,8 +2,9 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { env } from 'process';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid function
-import * as fs from 'fs';
+
 export const multerFileConfig = {
   dest: () => process.env.RESOURCE_FOLDER_LOCATION,
 };
@@ -18,50 +19,50 @@ export class FileTypesRegex {
   static ALL = new RegExp('.*', 'gi');
 }
 
-export const excelUploadOptions = (location = '', required = false) => ({
-  limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 10,
-  },
-  fileFilter: (_req: any, file: any, cb: any) => {
-    if (required && !file) {
-      cb(
-        new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
-        false,
-      );
-    }
+// export const excelUploadOptions = (location = '', required = false) => ({
+//   limits: {
+//     fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 10,
+//   },
+//   fileFilter: (_req: any, file: any, cb: any) => {
+//     if (required && !file) {
+//       cb(
+//         new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
+//         false,
+//       );
+//     }
 
-    if (
-      file.mimetype ===
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ) {
-      cb(null, true);
-    } else {
-      cb(
-        new HttpException(
-          `Файлын төрлийг хуулах боломжгүй байна. .xlsx өргөтгөлтэй файл оруулна уу.`,
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-    }
-  },
-  storage: diskStorage({
-    destination: (_req: any, _file: any, cb: any) => {
-      const uploadPath = multerFileConfig.dest() + '/' + location;
+//     if (
+//       file.mimetype ===
+//       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+//     ) {
+//       cb(null, true);
+//     } else {
+//       cb(
+//         new HttpException(
+//           `Файлын төрлийг хуулах боломжгүй байна. .xlsx өргөтгөлтэй файл оруулна уу.`,
+//           HttpStatus.BAD_REQUEST,
+//         ),
+//         false,
+//       );
+//     }
+//   },
+//   storage: diskStorage({
+//     destination: (_req: any, _file: any, cb: any) => {
+//       const uploadPath = multerFileConfig.dest() + '/' + location;
 
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
-      }
+//       if (!existsSync(uploadPath)) {
+//         mkdirSync(uploadPath);
+//       }
 
-      cb(null, uploadPath);
-    },
-    filename: (_req: any, file: any, cb: any) => {
-      const uniqueName = uuidv4() + extname(file.originalname);
+//       cb(null, uploadPath);
+//     },
+//     filename: (_req: any, file: any, cb: any) => {
+//       const uniqueName = uuidv4() + extname(file.originalname);
 
-      cb(null, uniqueName);
-    },
-  }),
-});
+//       cb(null, uniqueName);
+//     },
+//   }),
+// });
 
 export const fileUploadOptions = (
   type = FileTypesRegex.ALL,
@@ -111,129 +112,13 @@ export const fileUploadOptions = (
   }),
 });
 
-export const wavUploadOptions = (
-  type = FileTypesRegex.WAV,
-  location = '',
-  required = false,
-) => ({
-  limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
-  },
-  fileFilter: (_req: any, file: any, cb: any) => {
-    if (required && !file) {
-      cb(
-        new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
-        false,
-      );
-    }
-
-    if (file.mimetype.match(type)) {
-      cb(null, true);
-    } else {
-      cb(
-        new HttpException(
-          `Файлын төрлийг хуулах боломжгүй байна. .wav өргөтгөлтэй файл оруулна уу.`,
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-    }
-  },
-  storage: diskStorage({
-    destination: (_req: any, _file: any, cb: any) => {
-      const uploadPath = multerFileConfig.dest() + '/' + location;
-
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
-      }
-
-      cb(null, uploadPath);
-    },
-    filename: (_req: any, file: any, cb: any) => {
-      const uniqueName = uuidv4() + extname(file.originalname);
-
-      cb(null, uniqueName);
-    },
-  }),
-});
-
-export const wmaUploadOptions = (
-  type = FileTypesRegex.WMA,
-  location = '',
-  required = false,
-) => ({
-  limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
-  },
-  fileFilter: (_req: any, file: any, cb: any) => {
-    if (required && !file) {
-      cb(
-        new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
-        false,
-      );
-    }
-
-    if (file.mimetype.match(type)) {
-      cb(null, true);
-    } else {
-      cb(
-        new HttpException(
-          `Файлын төрлийг хуулах боломжгүй байна. .wma өргөтгөлтэй файл оруулна уу.`,
-          HttpStatus.BAD_REQUEST,
-        ),
-        false,
-      );
-    }
-  },
-  storage: diskStorage({
-    destination: (_req: any, _file: any, cb: any) => {
-      const uploadPath = multerFileConfig.dest() + '/' + location;
-
-      if (!existsSync(uploadPath)) {
-        mkdirSync(uploadPath);
-      }
-
-      cb(null, uploadPath);
-    },
-    filename: (_req: any, file: any, cb: any) => {
-      const uniqueName = uuidv4() + extname(file.originalname);
-      cb(null, uniqueName);
-    },
-  }),
-});
-
-export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) => {
-  return {
-    storage: diskStorage({
-      destination: (req, file, callback) => {
-        const uploadPath = `./uploads/${folderName}`; // Замыг тодорхойлох
-        // Хэрэв зам байхгүй бол үүсгэх
-        if (!fs.existsSync(uploadPath)) {
-          fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        callback(null, uploadPath); // Замыг буцаах
-      },
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        callback(null, `${uniqueSuffix}-${file.originalname}`);
-      },
-    }),
-    fileFilter: (req, file, callback) => {
-      if (!file.originalname.match(fileTypeRegex)) {
-        return callback(new Error('Зөвхөн зураг оруулна уу!'), false);
-      }
-      callback(null, true);
-    },
-  };
-};
-
-// export const imageUploadOptions = (
-//   type = FileTypesRegex.IMAGE,
+// export const wavUploadOptions = (
+//   type = FileTypesRegex.WAV,
 //   location = '',
 //   required = false,
 // ) => ({
 //   limits: {
-//     fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5, // Default to 5MB if not specified
+//     fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
 //   },
 //   fileFilter: (_req: any, file: any, cb: any) => {
 //     if (required && !file) {
@@ -248,7 +133,7 @@ export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) =>
 //     } else {
 //       cb(
 //         new HttpException(
-//           `Файлын төрлийг хуулах боломжгүй байна.`,
+//           `Файлын төрлийг хуулах боломжгүй байна. .wav өргөтгөлтэй файл оруулна уу.`,
 //           HttpStatus.BAD_REQUEST,
 //         ),
 //         false,
@@ -258,7 +143,6 @@ export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) =>
 //   storage: diskStorage({
 //     destination: (_req: any, _file: any, cb: any) => {
 //       const uploadPath = multerFileConfig.dest() + '/' + location;
-//       console.log('Upload path:', uploadPath);
 
 //       if (!existsSync(uploadPath)) {
 //         mkdirSync(uploadPath);
@@ -269,9 +153,136 @@ export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) =>
 //     filename: (_req: any, file: any, cb: any) => {
 //       const uniqueName = uuidv4() + extname(file.originalname);
 
-//       console.log('Generated file name:', uniqueName);
-
 //       cb(null, uniqueName);
 //     },
 //   }),
 // });
+
+// export const wmaUploadOptions = (
+//   type = FileTypesRegex.WMA,
+//   location = '',
+//   required = false,
+// ) => ({
+//   limits: {
+//     fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
+//   },
+//   fileFilter: (_req: any, file: any, cb: any) => {
+//     if (required && !file) {
+//       cb(
+//         new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
+//         false,
+//       );
+//     }
+
+//     if (file.mimetype.match(type)) {
+//       cb(null, true);
+//     } else {
+//       cb(
+//         new HttpException(
+//           `Файлын төрлийг хуулах боломжгүй байна. .wma өргөтгөлтэй файл оруулна уу.`,
+//           HttpStatus.BAD_REQUEST,
+//         ),
+//         false,
+//       );
+//     }
+//   },
+//   storage: diskStorage({
+//     destination: (_req: any, _file: any, cb: any) => {
+//       const uploadPath = multerFileConfig.dest() + '/' + location;
+
+//       if (!existsSync(uploadPath)) {
+//         mkdirSync(uploadPath);
+//       }
+
+//       cb(null, uploadPath);
+//     },
+//     filename: (_req: any, file: any, cb: any) => {
+//       const uniqueName = uuidv4() + extname(file.originalname);
+//       cb(null, uniqueName);
+//     },
+//   }),
+// });
+// export function imageUrl(imgUrl: string): string | null {
+//   if (!imgUrl) return null;
+//   const baseUrl = process.env.RESOURCE_DOMAIN;
+//   return `${baseUrl}${imgUrl.startsWith('/') ? imgUrl : `/${imgUrl}`}`;
+// }
+
+export const imageUploadOptions = (
+  type = FileTypesRegex.IMAGE,
+  location = '',
+  required = false,
+) => ({
+  limits: {
+    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5, // Default to 5MB if not specified
+  },
+  fileFilter: (_req: any, file: any, cb: any) => {
+    if (required && !file) {
+      cb(
+        new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
+        false,
+      );
+    }
+
+    if (file.mimetype.match(type)) {
+      cb(null, true);
+    } else {
+      cb(
+        new HttpException(
+          `Файлын төрлийг хуулах боломжгүй байна.`,
+          HttpStatus.BAD_REQUEST,
+        ),
+        false,
+      );
+    }
+  },
+  storage: diskStorage({
+    destination: (_req: any, _file: any, cb: any) => {
+      const uploadPath = multerFileConfig.dest() + '/' + location;
+      console.log('Upload path=====>:', uploadPath);
+
+      // if (!existsSync(uploadPath)) {
+      //   mkdirSync(uploadPath, { recursive: true }); // recursive: true тохиргоо ашиглана
+      // }
+      if (!existsSync(uploadPath)) {
+        mkdirSync(uploadPath);
+      }
+
+      cb(null, uploadPath);
+    },
+    filename: (_req: any, file: any, cb: any) => {
+      const uniqueName = uuidv4() + extname(file.originalname);
+
+      console.log('Generated file name:', uniqueName);
+
+      cb(null, uniqueName);
+    },
+  }),
+});
+
+
+
+// export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) => {
+//   return {
+//     storage: diskStorage({
+//       destination: (req, file, callback) => {
+//         const uploadPath = `./uploads/${folderName}`; // Замыг тодорхойлох
+//         // Хэрэв зам байхгүй бол үүсгэх
+//         if (!fs.existsSync(uploadPath)) {
+//           fs.mkdirSync(uploadPath, { recursive: true });
+//         }
+//         callback(null, uploadPath); // Замыг буцаах
+//       },
+//       filename: (req, file, callback) => {
+//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+//         callback(null, `${uniqueSuffix}-${file.originalname}`);
+//       },
+//     }),
+//     fileFilter: (req, file, callback) => {
+//       if (!file.originalname.match(fileTypeRegex)) {
+//         return callback(new Error('Зөвхөн зураг оруулна уу!'), false);
+//       }
+//       callback(null, true);
+//     },
+//   };
+// };

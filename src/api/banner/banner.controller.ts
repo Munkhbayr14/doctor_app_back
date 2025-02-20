@@ -26,21 +26,6 @@ export const storage = {
 export class BannerController {
   constructor(private readonly bannerService: BannerService) { }
 
-  // @Post()
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       title: { type: 'string' },
-  //       description: { type: 'string' },
-  //       image: { type: 'string' },
-  //     },
-  //   },
-  // })
-  // create(@Body() createBannerDto: CreateBannerDto) {
-  //   return this.bannerService.bannerCreate(createBannerDto);
-  // }
-
   @Post('upload')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image', imageUploadOptions(FileTypesRegex.IMAGE, 'banner-image')))
@@ -59,17 +44,13 @@ export class BannerController {
   })
   async bannerImage(
     @Body() createBannerDto: CreateBannerDto,
-    @UploadedFile() img: Express.Multer.File) {
-    console.log('Uploaded file:', img);
-    if (!img) {
+    @UploadedFile() image: Express.Multer.File) {
+    console.log('Uploaded file:', image);
+    if (!image) {
       throw new BadRequestException('Файл хүлээн авсангүй!');
     }
-    return this.bannerService.bannerCreate(createBannerDto, img);
-
-    // return { filePath: `/uploads/image/${file.filename}` };
+    return this.bannerService.bannerCreate(createBannerDto, image);
   }
-
-
 
   @Get("/all")
   // @UseGuards(JwtAuthGuard)
