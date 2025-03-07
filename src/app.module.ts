@@ -4,6 +4,7 @@ import { PrismaModule } from './api/prisma/prisma.module';
 import { BannerModule } from './api/banner/banner.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ProfileModule } from './api/profile/profile.module';
 
 @Module({
   imports: [ServeStaticModule.forRoot({
@@ -15,7 +16,7 @@ import { join } from 'path';
     //   fallthrough: true,
     // },
     // useGlobalPrefix: false,
-  }), AuthModule, PrismaModule, BannerModule],
+  }), AuthModule, PrismaModule, BannerModule, ProfileModule],
   controllers: [],
   providers: [],
 })

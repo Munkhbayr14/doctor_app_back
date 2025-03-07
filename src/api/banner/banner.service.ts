@@ -11,25 +11,6 @@ import getResourceUrl from 'libs/getResourceUrl';
 export class BannerService {
   constructor(private prisma: PrismaService,) { }
 
-  // async bannerCreate(createBannerDto: CreateBannerDto) {
-
-  //   if (!createBannerDto) {
-  //     throw new BadRequestException('Мэдээлэл хоосон байна');
-  //   }
-  //   try {
-  //     const banner = await this.prisma.banner.create({
-  //       data: createBannerDto,
-  //     });
-  //     return {
-  //       message: 'Амжилттай',
-  //       statusCode: 200,
-  //       data: banner,
-  //     };
-  //   } catch (error) {
-  //     throw new BadRequestException('Баннер үүсгэхэд алдаа гарлаа');
-  //   }
-  // }
-
   async bannerCreate(
     createBannerDto: CreateBannerDto,
     image?: Express.Multer.File,
@@ -62,13 +43,12 @@ export class BannerService {
         result: { message: 'Failed to create card', error: e.message },
       };
     }
-
   }
 
   async bannerAll() {
     try {
       const bannerAll = await this.prisma.banner.findMany();
-      const updatedBannerImage = bannerAll.map((banner) => {
+      bannerAll.map((banner) => {
         banner.image = `${process.env.RESOURCE_IMAGE_PREFIX}/${banner.image}`
       })
       return {
@@ -83,29 +63,6 @@ export class BannerService {
         result: { message: 'Failed to retrieve banners', error: error.message },
       };
     }
-    // Promise.all ашиглан бүх image URL-уудыг асинхрон дуудах
-    // const Banners = await Promise.all(
-    //   bannerAll.map(async (banner) => ({
-    //     ...banner,
-    //     image: banner.image ? await getResourceUrl(banner.image) : null,
-    //     // getResourceUrl асинхрон функц
-    //   }))
-
-    // );
-
-
-
-    // return await Promise.all(
-    //   bannerAll.map(async (item) => {
-    //     item.image = await getResourceUrl(item.image);
-    //     return { ...item };
-    //   }),
-    // );
-    // return {
-    //   message: 'Амжилттай',
-    //   statusCode: 200,
-    //   result: Banners
-    // }
   }
 
   findOne(id: number) {

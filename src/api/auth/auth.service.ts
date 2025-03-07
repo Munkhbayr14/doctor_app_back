@@ -29,10 +29,22 @@ export class AuthService {
           email: registerUserDto.email,
           firstName: registerUserDto.firstname,
           lastName: registerUserDto.lastname,
-          // role: registerUserDto.role || undefined,
+          role: registerUserDto.role || undefined,
           hash,
+          profile: {
+            create: {
+              lastName: `${registerUserDto.lastname}`,
+              firstName: `${registerUserDto.firstname}`,
+              email: `${registerUserDto.email}`,
+              avatarUrl: null,
+            },
+          },
         },
-      });
+        include: {
+          profile: true,
+        },
+      },
+      )
       return {
         message: 'Амжилттай бүртгэгдлээ',
         statusCode: 200,
@@ -40,7 +52,8 @@ export class AuthService {
         email: userExists.email,
         firstname: userExists.firstName,
         lastname: userExists.lastName,
-        // role: user.role,
+        role: userExists.role,
+        profile: userExists.profile
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -64,7 +77,7 @@ export class AuthService {
       throw new UnauthorizedException('Хэрэглэгчийн нэвтрэх нэр эсвэл нууц үг буруу байна!');
     }
 
-    const payload = { email: user.email, userId: user.id, username: user.firstName };
+    const payload = { email: user.email, userId: user.id, username: user.firstName, role: user.role };
     return {
       statusCode: 200,
       message: "Амжилттай нэвтэрлээ",
@@ -73,6 +86,19 @@ export class AuthService {
       userId: user.id,
       email: user.email,
       username: user.firstName,
+      role: user.role
+    };
+  }
+
+  async logout(userId: number) {
+    console.log(`===> ${userId}`)
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
+    return {
+      message: 'Logged out successfully',
+      statusCode: 200
     };
   }
 

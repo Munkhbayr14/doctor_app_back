@@ -9,18 +9,7 @@ import { diskStorage } from 'multer';
 import path from 'path';
 import { Observable, of } from 'rxjs';
 import { FileTypesRegex, imageUploadOptions } from 'config/FileUploadConfig';
-export const storage = {
-  storage: diskStorage({
-    destination: './uploads/blog-entry-images',
-    filename: (req, file, cb) => {
-      const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-      const extension: string = path.parse(file.originalname).ext;
 
-      cb(null, `${filename}${extension}`)
-    }
-  })
-
-}
 @ApiTags('Banner')
 @Controller('banner')
 export class BannerController {

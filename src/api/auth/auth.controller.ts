@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, Req, } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, Req, UseGuards, } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -20,11 +21,11 @@ export class AuthController {
         email: { type: 'string' },
         password: { type: 'string' },
         confirmationPassword: { type: 'string' },
-        // role: {
-        //   type: 'string',
-        //   enum: ['HAB', 'EMPLOYEE',],
-        //   example: 'EMPLOYEE || HAB',
-        // },
+        role: {
+          type: 'string',
+          enum: ['USER', 'SUPER_ADMIN',],
+          example: 'USER || SUPER_ADMIN',
+        },
       },
     },
   })
@@ -46,9 +47,12 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
   @Post('logout')
-  logoutUser(@Req() req) {
-    return req.logout();
+  async logoutUser(@Req() req) {
+    console.log(`====> ${req.user.userId}`)
+    return await this.authService.logout(req.user.userId);
+
   }
 }

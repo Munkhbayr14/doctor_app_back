@@ -13,7 +13,6 @@ const getResourceUrl = async (filename: string): Promise<string> => {
         if (!resourceDomain || !folderLocation) {
             throw new Error('RESOURCE_DOMAIN or RESOURCE_FOLDER_LOCATION is not set');
         }
-
         const normalizedPath = fileFullPath.replace(/^C:[\\/]/, '').replace(/\\/g, '/');
         const fileRelativePath = normalizedPath.replace(folderLocation.replace(/^C:[\\/]/, '').replace(/\\/g, '/'), '');
 

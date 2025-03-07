@@ -12,6 +12,7 @@ import {
     IsObject,
     IsEnum,
 } from 'class-validator';
+import { UserRole } from 'src/common/model/roles.model';
 
 export class RegisterUserDto {
     @ApiProperty()
@@ -41,6 +42,6 @@ export class RegisterUserDto {
     @MaxLength(64)
     confirmationPassword: string;
 
-    // @IsEnum(UserRole)
-    // role?: UserRole;
+    @IsEnum(UserRole)
+    role?: UserRole;
 }
