@@ -38,7 +38,7 @@ export class ProfileController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.profileService.findOne(+id);
+    return this.profileService.profileData(+id);
   }
 
   @Patch(':id')
@@ -60,12 +60,11 @@ export class ProfileController {
     }
   })
   update(@Param('id') id: string,
-    @Body('lastname') lastname: string,
-    @Body('firstname') firstname: string,
-    @Body('email') email: string,
+    @Body() createProfileDto: CreateProfileDto,
     @UploadedFile() avatarUrl: Express.Multer.File
   ) {
-    return this.profileService.updateProfile(+id, lastname, firstname, email, avatarUrl);
+
+    return this.profileService.updateProfile(+id, createProfileDto, avatarUrl);
   }
 
   @Delete(':id')

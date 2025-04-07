@@ -8,62 +8,86 @@ import { ApiResponseStatusModel } from 'src/common/model/api-status.model';
 @Injectable()
 export class ProfileService {
 
-  constructor(private prisma: PrismaService) {
-
-  }
+  constructor(private prisma: PrismaService) { }
 
   create(createProfileDto: CreateProfileDto) {
     return 'This action adds a new profile';
   }
 
-  findAll() {
-    return `This action returns all profile`;
+  async findAll() {
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
+  async profileData(id: number) {
+    const profileData = await this.prisma.profile.findUnique({
+      where: { userId: id },
+    });
+    if (!profileData) {
+      throw new NotFoundException(`${id}-тай хэрэглэгчийн profile олдсонгүй`);
+    }
+    const updatedProfileData = {
+      ...profileData,
+      avatarUrl: profileData.avatarUrl != null && profileData.avatarUrl != ""
+        ? `${process.env.RESOURCE_IMAGE_PREFIX}/${profileData.avatarUrl}`
+        : "",
+    };
+    return {
+      statusCode: 200,
+      status: ApiResponseStatusModel.SUCCESS,
+      result: updatedProfileData,
+    };
   }
 
   async updateProfile(
     id: number,
-    lastName?: string,
-    firstName?: string,
-    email?: string,
+    createProfileDto: CreateProfileDto,
     avatarUrl?: Express.Multer.File,
   ) {
     try {
-      // Find the user by ID
       const user = await this.prisma.user.findUnique({
         where: { id: id }
       });
-
       if (!user) {
         throw new NotFoundException(`${id}-тай хэрэглэгч олдсонгүй`);
       }
 
-      // Prepare the data to update
-      const profileData: any = {
-        lastName: lastName,
-        firstName: firstName,
-        email: email,
-      };
+      const existProfile = await this.prisma.profile.findUnique({
+        where: {
+          userId: id
+        }
+      });
+      if (!existProfile) {
+        throw new NotFoundException(`${id}-тай хэрэглэгчийн proifle олдсонгүй`);
+      }
 
-      // If an avatar is provided, update the avatar URL
+      const profileData: any = {
+        lastName: createProfileDto.lastname,
+        firstName: createProfileDto.firstname,
+        email: createProfileDto.email,
+      };
+      const UserData: any = {
+        lastName: createProfileDto.lastname,
+        firstName: createProfileDto.firstname,
+        email: createProfileDto.email
+      };
       if (avatarUrl) {
         const avatarData = await getResourceUrl(avatarUrl.filename);
         console.log('Generated Avatar URL:', avatarData);
         profileData.avatarUrl = avatarData;
       }
-
-      // Update the profile
-      const updatedProfile = await this.prisma.profile.update({
-        where: { userId: id },
-        data: profileData,
-      });
-
+      const [updatedUser, updatedProfile] = await this.prisma.$transaction([
+        this.prisma.user.update({
+          where: { id },
+          data: UserData,
+        }),
+        this.prisma.profile.update({
+          where: { userId: id },
+          data: profileData,
+        }),
+      ]);
       return {
-        statusCode: 201,
+        statusCode: 200,
         status: ApiResponseStatusModel.SUCCESS,
+        message: "Таны мэдээлэл амжилттай солигдлоо",
         result: updatedProfile,
       };
     } catch (e) {
@@ -74,9 +98,9 @@ export class ProfileService {
         result: { message: 'Failed to update profile', error: e.message },
       };
     }
-  }-
+  }
 
-    remove(id: number) {
-  return `This action removes a #${id} profile`;
-}
+  remove(id: number) {
+    return `This action removes a #${id} profile`;
+  }
 }

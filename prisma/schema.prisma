@@ -48,3 +48,17 @@ model Banner {
 
   @@map("banners")
 }
+
+model Music {
+  id        Int      @id @default(autoincrement())
+  title     String
+  file      String
+  saffron   String?
+  alto      String?
+  tenor     String?
+  bass      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("musics")
+}

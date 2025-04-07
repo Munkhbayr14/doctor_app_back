@@ -112,51 +112,51 @@ export const fileUploadOptions = (
   }),
 });
 
-// export const wavUploadOptions = (
-//   type = FileTypesRegex.WAV,
-//   location = '',
-//   required = false,
-// ) => ({
-//   limits: {
-//     fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
-//   },
-//   fileFilter: (_req: any, file: any, cb: any) => {
-//     if (required && !file) {
-//       cb(
-//         new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
-//         false,
-//       );
-//     }
+export const MP3UploadOptions = (
+  type = FileTypesRegex.MP3,
+  location = '',
+  required = false,
+) => ({
+  limits: {
+    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5,
+  },
+  fileFilter: (_req: any, file: any, cb: any) => {
+    if (required && !file) {
+      cb(
+        new HttpException(`Файлыг заавал оруулна уу`, HttpStatus.BAD_REQUEST),
+        false,
+      );
+    }
 
-//     if (file.mimetype.match(type)) {
-//       cb(null, true);
-//     } else {
-//       cb(
-//         new HttpException(
-//           `Файлын төрлийг хуулах боломжгүй байна. .wav өргөтгөлтэй файл оруулна уу.`,
-//           HttpStatus.BAD_REQUEST,
-//         ),
-//         false,
-//       );
-//     }
-//   },
-//   storage: diskStorage({
-//     destination: (_req: any, _file: any, cb: any) => {
-//       const uploadPath = multerFileConfig.dest() + '/' + location;
+    if (file.mimetype.match(type)) {
+      cb(null, true);
+    } else {
+      cb(
+        new HttpException(
+          `Файлын төрлийг хуулах боломжгүй байна. .MP3 өргөтгөлтэй файл оруулна уу.`,
+          HttpStatus.BAD_REQUEST,
+        ),
+        false,
+      );
+    }
+  },
+  storage: diskStorage({
+    destination: (_req: any, _file: any, cb: any) => {
+      const uploadPath = multerFileConfig.dest() + '/' + location;
 
-//       if (!existsSync(uploadPath)) {
-//         mkdirSync(uploadPath);
-//       }
+      if (!existsSync(uploadPath)) {
+        mkdirSync(uploadPath);
+      }
 
-//       cb(null, uploadPath);
-//     },
-//     filename: (_req: any, file: any, cb: any) => {
-//       const uniqueName = uuidv4() + extname(file.originalname);
+      cb(null, uploadPath);
+    },
+    filename: (_req: any, file: any, cb: any) => {
+      const uniqueName = uuidv4() + extname(file.originalname);
 
-//       cb(null, uniqueName);
-//     },
-//   }),
-// });
+      cb(null, uniqueName);
+    },
+  }),
+});
 
 // export const wmaUploadOptions = (
 //   type = FileTypesRegex.WMA,
@@ -214,7 +214,7 @@ export const imageUploadOptions = (
   required = false,
 ) => ({
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 5, // Default to 5MB if not specified
+    fileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 1024 * 1024 * 10, // Default to 5MB if not specified
   },
   fileFilter: (_req: any, file: any, cb: any) => {
     if (required && !file) {
@@ -242,7 +242,7 @@ export const imageUploadOptions = (
       console.log('Upload path=====>:', uploadPath);
 
       // if (!existsSync(uploadPath)) {
-      //   mkdirSync(uploadPath, { recursive: true }); // recursive: true тохиргоо ашиглана
+      //   mkdirSync(uploadPath, { recursive: true }); 
       // }
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath);
@@ -259,30 +259,3 @@ export const imageUploadOptions = (
     },
   }),
 });
-
-
-
-// export const imageUploadOptions = (fileTypeRegex: RegExp, folderName: string) => {
-//   return {
-//     storage: diskStorage({
-//       destination: (req, file, callback) => {
-//         const uploadPath = `./uploads/${folderName}`; // Замыг тодорхойлох
-//         // Хэрэв зам байхгүй бол үүсгэх
-//         if (!fs.existsSync(uploadPath)) {
-//           fs.mkdirSync(uploadPath, { recursive: true });
-//         }
-//         callback(null, uploadPath); // Замыг буцаах
-//       },
-//       filename: (req, file, callback) => {
-//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-//         callback(null, `${uniqueSuffix}-${file.originalname}`);
-//       },
-//     }),
-//     fileFilter: (req, file, callback) => {
-//       if (!file.originalname.match(fileTypeRegex)) {
-//         return callback(new Error('Зөвхөн зураг оруулна уу!'), false);
-//       }
-//       callback(null, true);
-//     },
-//   };
-// };
