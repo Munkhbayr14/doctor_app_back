@@ -49,7 +49,7 @@ export class BannerService {
     try {
       const bannerAll = await this.prisma.banner.findMany();
       bannerAll.map((banner) => {
-        banner.image = `${process.env.RESOURCE_IMAGE_PREFIX}/${banner.image}`
+        banner.image = `${process.env.RESOURCE_IMAGE_PREFIX}/banner-image/${banner.image}`
       })
       return {
         statusCode: 200,

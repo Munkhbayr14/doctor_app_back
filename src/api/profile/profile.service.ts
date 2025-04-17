@@ -18,6 +18,7 @@ export class ProfileService {
   }
 
   async profileData(id: number) {
+    const folderUrl = "avatarUrl"
     const profileData = await this.prisma.profile.findUnique({
       where: { userId: id },
     });
@@ -27,7 +28,7 @@ export class ProfileService {
     const updatedProfileData = {
       ...profileData,
       avatarUrl: profileData.avatarUrl != null && profileData.avatarUrl != ""
-        ? `${process.env.RESOURCE_IMAGE_PREFIX}/${profileData.avatarUrl}`
+        ? `${process.env.RESOURCE_IMAGE_PREFIX}/${folderUrl}/${profileData.avatarUrl}`
         : "",
     };
     return {

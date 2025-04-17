@@ -10,7 +10,6 @@ import { FileTypesRegex, imageUploadOptions } from 'config/FileUploadConfig';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) { }
 
-
   @Post()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatarUrl', imageUploadOptions(FileTypesRegex.IMAGE, 'avatarUrl')))

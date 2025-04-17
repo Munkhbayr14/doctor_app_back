@@ -52,7 +52,8 @@ model Banner {
 model Music {
   id        Int      @id @default(autoincrement())
   title     String
-  file      String
+  musicUrl  String?
+  file      String?
   saffron   String?
   alto      String?
   tenor     String?

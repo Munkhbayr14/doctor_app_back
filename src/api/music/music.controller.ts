@@ -3,20 +3,36 @@ import { MusicService } from './music.service';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UpdateMusicDto } from './dto/update-music.dto';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileTypesRegex, fileUploadOptions, imageUploadOptions, MP3UploadOptions } from 'config/FileUploadConfig';
+
 
 @ApiTags('Music')
 @Controller('music')
 export class MusicController {
   constructor(private readonly musicService: MusicService) { }
+
+
   @Post()
   @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'file', maxCount: 1 },
+        { name: 'saffron', maxCount: 1 },
+        { name: 'alto', maxCount: 1 },
+        { name: 'tenor', maxCount: 1 },
+        { name: 'bass', maxCount: 1 },
+      ],
+      fileUploadOptions(FileTypesRegex.ALL, 'file'),
+    ),
+  )
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         title: { type: 'string' },
+        musicUrl: { type: 'string' },
         file: { type: 'string', format: 'binary' },
         saffron: { type: 'string', format: 'binary' },
         alto: { type: 'string', format: 'binary' },
@@ -25,26 +41,30 @@ export class MusicController {
       },
     },
   })
-  @UseInterceptors(
-    FileInterceptor('file', fileUploadOptions(FileTypesRegex.ALL, 'file')),
-    FileInterceptor('saffron', MP3UploadOptions(FileTypesRegex.MP3, 'saffron')),
-    FileInterceptor('alto', MP3UploadOptions(FileTypesRegex.MP3, 'alto')),
-    FileInterceptor('tenor', MP3UploadOptions(FileTypesRegex.MP3, 'tenor')),
-    FileInterceptor('bass', MP3UploadOptions(FileTypesRegex.MP3, 'bass'))
-  )
   async create(
     @Body() createMusicDto: CreateMusicDto,
-    @UploadedFile() file: Express.Multer.File,
-    @UploadedFile() saffron: Express.Multer.File,
-    @UploadedFile() alto: Express.Multer.File,
-    @UploadedFile() tenor: Express.Multer.File,
-    @UploadedFile() bass: Express.Multer.File
+    @UploadedFiles()
+    files: {
+      file?: Express.Multer.File[],
+      saffron?: Express.Multer.File[],
+      alto?: Express.Multer.File[],
+      tenor?: Express.Multer.File[],
+      bass?: Express.Multer.File[],
+    },
   ) {
-    return this.musicService.createMusic(createMusicDto, { file, saffron, alto, tenor, bass });
+    const fileData = {
+      file: files.file?.[0] ?? null,
+      saffron: files.saffron?.[0] ?? null,
+      alto: files.alto?.[0] ?? null,
+      tenor: files.tenor?.[0] ?? null,
+      bass: files.bass?.[0] ?? null,
+    };
+    return this.musicService.createMusic(createMusicDto, fileData);
   }
-  @Get()
-  findAll() {
-    return this.musicService.findAll();
+
+  @Get("/all")
+  musicAll() {
+    return this.musicService.musicAll();
   }
 
   @Get(':id')
