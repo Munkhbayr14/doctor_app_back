@@ -7,6 +7,7 @@ import { join } from 'path';
 import { ProfileModule } from './api/profile/profile.module';
 import { MusicModule } from './api/music/music.module';
 import { NotificationModule } from './api/notification/notification.module';
+import { PostsModule } from './api/posts/posts.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { NotificationModule } from './api/notification/notification.module';
         redirect: false,
       },
     })
-    , AuthModule, PrismaModule, BannerModule, ProfileModule, MusicModule, NotificationModule],
+    , AuthModule, PrismaModule, BannerModule, ProfileModule, MusicModule, NotificationModule, PostsModule],
   controllers: [],
   providers: [],
 })
