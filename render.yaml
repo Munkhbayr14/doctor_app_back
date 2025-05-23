@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nest-backend
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm run start:prod
+    rootDir: .
+    envVars:
+      - key: PORT
+        value: "3000"
+    
