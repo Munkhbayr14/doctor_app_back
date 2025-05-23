@@ -3,7 +3,7 @@ services:
     name: selah-backend
     runtime: node
     plan: free
-    buildCommand: ./node_modules/.bin/nest build
+    buildCommand: npm run build
     startCommand: npm run start:prod
     rootDir: .
     envVars:
