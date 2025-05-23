@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: nest-backend
+    name: selah-backend
     runtime: node
     plan: free
     buildCommand: npm run build
