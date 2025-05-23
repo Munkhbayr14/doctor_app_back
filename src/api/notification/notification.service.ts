@@ -2,16 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import * as admin from 'firebase-admin';
-import serviceAccount from './firebase-config.json';
+
 
 @Injectable()
 export class NotificationService {
   constructor() {
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-      });
-    }
+
   }
   async sendPushNotification(createNotificationDto: CreateNotificationDto) {
     const { token, title, description } = createNotificationDto;
