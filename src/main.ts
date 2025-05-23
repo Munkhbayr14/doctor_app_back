@@ -22,7 +22,7 @@ async function bootstrap() {
         in: 'header',
       },
       'JWT',
-    )
+    ).addServer('/')
     .build();
   const customOptions: SwaggerCustomOptions = {
     swaggerOptions: {
