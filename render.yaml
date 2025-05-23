@@ -10,7 +10,7 @@ services:
       - key: JWT_SECRET
         value: "secretKey"
       - key: DATABASE_URL
-        value: "postgresql://selahdb_kpo2_user:SLNNnCMpmYvEkD8FxDWpkhxS499JZM90@dpg-d0052jvdiees739mi9q0-a.oregon-postgres.render.com:5432/selahdb_kpo2?schema=public"
+        value: "postgresql://selahdb_kpo2_user:SLNNnCMpmYvEkD8FxDWpkhxS499JZM90@dpg-d0o52jvdiees739mi9q0-a.oregon-postgres.render.com:5432/selahdb_kpo2?schema=public"
       - key: RESOURCE_FOLDER_LOCATION
         value: "./public/images"
       - key: RESOURCE_DOMAIN
