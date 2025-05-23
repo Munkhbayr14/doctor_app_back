@@ -3,10 +3,19 @@ services:
     name: selah-backend
     runtime: node
     plan: free
-    buildCommand: npm run build
+    buildCommand: npx nest build
     startCommand: npm run start:prod
     rootDir: .
     envVars:
-      - key: PORT
-        value: "3000"
-    
+      - key: JWT_SECRET
+        value: "secretKey"
+      - key: DATABASE_URL
+        value: "postgresql://postgres:test@localhost:5432/back_end?schema=public"
+      - key: RESOURCE_FOLDER_LOCATION
+        value: "./public/images"
+      - key: RESOURCE_DOMAIN
+        value: "https://selah-backend.onrender.com/api"
+      - key: RESOURCE_IMAGE_PREFIX
+        value: "https://selah-backend.onrender.com/images"
+      - key: MAX_FILE_SIZE
+        value: "5242880"
